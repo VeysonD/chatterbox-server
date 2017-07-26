@@ -6,8 +6,8 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
-var messages = [];
-
+var messages = [{'username': 'sonic', 'text': 'ur 2 slow'}];
+var objectId = 0;
 var messagesObj = {};
 messagesObj['results'] = messages;
 
@@ -19,9 +19,9 @@ var requestHandler = function(request, response) {
   headers['Content-Type'] = 'application/json';
 
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-//////////
+  ////////////ss
 
-  if (request.url !== '/' && request.url !== '/classes/messages'&& request.url !== '/chatterbox') {
+  if (request.url !== '/' && request.url !== '/classes/messages' && request.url !== '/chatterbox') {
     statusCode = 404;
 
   } else {
@@ -38,7 +38,8 @@ var requestHandler = function(request, response) {
 
     if (request.method === 'GET') {
       statusCode = 200;
-      console.log(messagesObj);
+      //console.log(messagesObj);
+
       console.log('Get');
     }
 
@@ -52,11 +53,13 @@ var requestHandler = function(request, response) {
       }).on('end', () => {
         var dataString = data.toString();
         var parsedData = JSON.parse(dataString);
-        console.log(parsedData);
+        objectId += 1;
+        parsedData['objectId'] = objectId;
+        console.log(objectId);
         messages.push(parsedData);
-        //console.log(messages);
+        console.log(messages);
       });
-//////
+      //////
 
     }
   }
