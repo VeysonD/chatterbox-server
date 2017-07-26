@@ -9,7 +9,7 @@ var defaultCorsHeaders = {
 var urlParser = require('url');
 
 
-var messages = [{'username': 'sonic', 'text': 'ur 2 slow'}];
+var messages = [{'username': 'sonic', 'text': 'ur 2 slow', 'objectId': 0}];
 var objectId = 0;
 var messagesObj = {};
 messagesObj['results'] = messages;
@@ -24,10 +24,7 @@ var requestHandler = function(request, response) {
 
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
-  if (parts.pathname !== '/' && parts.pathname !== '/classes/messages' && parts.pathname !== '/chatterbox' && parts.pathname !== '/classes/room') {
-    statusCode = 404;
-
-  } else {
+  if ( parts.pathname === '/' || parts.pathname === '/classes/messages' || parts.pathname === '/chatterbox' || parts.pathname === '/classes/room') {
 
     if (request.method === 'OPTIONS') {
       console.log('RUNNING OPTIONS METHOD');
@@ -64,17 +61,23 @@ var requestHandler = function(request, response) {
         messages.unshift(parsedData);
         //console.log(messages);
       });
-
     }
+
+   // u r gone rick  in zoom
+    response.writeHead(statusCode, headers);
+    //console.log('response', response);
+    response.end(JSON.stringify(messagesObj));
+
+  } else {
+    statusCode = 404;
+    response.writeHead(statusCode, headers);
+    response.end(null);
+
   }
-
-  response.writeHead(statusCode, headers);
-  //console.log('response', response);
-  response.end(JSON.stringify(messagesObj));
 };
 
-var requestMethod = function() {
+// var requestMethod = function() {
 
-};
+// };
 
 exports.requestHandler = requestHandler;
