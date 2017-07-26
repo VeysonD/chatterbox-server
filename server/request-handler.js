@@ -6,6 +6,9 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+var urlParser = require('url');
+
+
 var messages = [{'username': 'sonic', 'text': 'ur 2 slow'}];
 var objectId = 0;
 var messagesObj = {};
@@ -14,23 +17,24 @@ messagesObj['results'] = messages;
 
 
 var requestHandler = function(request, response) {
+  var parts = urlParser.parse(request.url);
   var statusCode;
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'application/json';
 
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-  ////////////ss
 
-  if (request.url !== '/' && request.url !== '/classes/messages' && request.url !== '/chatterbox') {
+  if (parts.pathname !== '/' && parts.pathname !== '/classes/messages' && parts.pathname !== '/chatterbox' && parts.pathname !== '/classes/room') {
     statusCode = 404;
 
   } else {
 
     if (request.method === 'OPTIONS') {
-      console.log('Why is this happening');
+      console.log('RUNNING OPTIONS METHOD');
+      console.log('response', response);
+      console.log('request', request);
       statusCode = 200;
       response.writeHead(statusCode, headers);
-      console.log('response', response);
       response.end(null);
       //response.end(JSON.stringify(messagesObj));
     }
@@ -48,6 +52,7 @@ var requestHandler = function(request, response) {
     if (request.method === 'POST') {
       statusCode = 201;
       var data = '';
+      console.log('memememememe', request);
       request.on('data', (chunk) => {
         data += chunk;
       }).on('end', () => {
@@ -55,17 +60,16 @@ var requestHandler = function(request, response) {
         var parsedData = JSON.parse(dataString);
         objectId += 1;
         parsedData['objectId'] = objectId;
-        console.log(objectId);
-        messages.push(parsedData);
-        console.log(messages);
+        //console.log(objectId);npm te
+        messages.unshift(parsedData);
+        //console.log(messages);
       });
-      //////
 
     }
   }
 
   response.writeHead(statusCode, headers);
-  console.log('response', response);
+  //console.log('response', response);
   response.end(JSON.stringify(messagesObj));
 };
 
